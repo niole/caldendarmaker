@@ -101,23 +101,26 @@ assert.equal(
 assert.deepEqual(
   getTimeChunks(breaks.sort((a, b) => a.startTime - b.startTime), hourToMs(8.5), hourToMs(19)),
   [
-    [0, hourToMs(3.5)],
-    [1, hourToMs(4)],
-    [2, hourToMs(1)]
+    hourToMs(3.5),
+    hourToMs(4),
+    hourToMs(1)
   ]
 );
 
 assert.deepEqual(
   getTimeChunks(breaks.sort((a, b) => a.startTime - b.startTime), hourToMs(12), hourToMs(19)),
   [
-    [1, hourToMs(4)],
-    [2, hourToMs(1)]
+    hourToMs(4),
+    hourToMs(1)
   ]
 );
 
 assert.deepEqual(
   getTimeChunks(breaks.sort((a, b) => a.startTime - b.startTime), hourToMs(12), hourToMs(18)),
-  [
-    [1, hourToMs(4)]
-  ]
+  [hourToMs(4)]
+);
+
+assert.deepEqual(
+  getTimeChunks([], hourToMs(12), hourToMs(18)),
+  [hourToMs(6)]
 );

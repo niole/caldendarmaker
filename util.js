@@ -2,25 +2,24 @@ function getTimeChunks(breaks, startTime, endTime) {
   const timeChunks = [];
   if (breaks.length) {
     if (startTime !== breaks[0].startTime) {
-      timeChunks.push([0, breaks[0].startTime - startTime]);
+      timeChunks.push(breaks[0].startTime - startTime);
     }
 
     let nextBreak = 1;
 
     while(nextBreak < breaks.length) {
-      timeChunks.push([
-        nextBreak,
-        breaks[nextBreak].startTime - breaks[nextBreak-1].getEndTime(),
-      ]);
+      timeChunks.push(
+        breaks[nextBreak].startTime - breaks[nextBreak-1].getEndTime()
+      );
       nextBreak += 1;
     }
 
     if (endTime !== breaks[breaks.length-1].getEndTime()) {
-      timeChunks.push([breaks.length, endTime - breaks[breaks.length - 1].getEndTime()]);
+      timeChunks.push(endTime - breaks[breaks.length - 1].getEndTime());
     }
 
   } else {
-    timeChunks.push([0, endTime - startTime]);
+    timeChunks.push(endTime - startTime);
   }
   return timeChunks;
 }
