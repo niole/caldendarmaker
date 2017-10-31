@@ -8,10 +8,21 @@ const _15Min = 15*60*1000;
 function calendarFactory(todos, breaks, startTime, endTime) {
   const sortedBreaks = breaks.sort((a, b) => a.startTime - b.startTime);
   const timeChunks = getTimeChunks(breaks, startTime, endTime);
-
-  return fitTodos(todos, timeChunks);
+  const allTodoCombinations = fitTodos(todos, timeChunks);
+  return allTodoCombinations;
 }
 
+/**
+ * Finds all combinations of todos for all chunks of time found between breaks
+ * permutations per chunk of time between breaks are not included
+ *
+ * @param {Todo[]} todos - what the user has defined as wanting to put in schedule
+ * @param {number[]} timeChunks - available chunks of time between user provided breaks
+ * @param {Event[]} state - events, which are the todos and their durations grouped by time chunk
+ * @param {number} nextTimeChunk - the index of the next time chunk to create events for
+ * @return {Event[][]} - events grouped by day and secondly the time chunk in which they fit
+ * TODO create Calendar data type
+ */
 function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
   if (nextTimeChunk === timeChunks.length) {
      if (todos.length === 0) {
@@ -35,6 +46,15 @@ function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
   return toReturn;
 }
 
+/**
+ * Gets combinations of events for a timechunk
+ *
+ * @param {number} chunkLeft - chunk of time left to fill with events
+ * @param {Todo[]} todos - todos to choose from
+ * @param {Event[]} chosen - chose events for this time chunk
+ * @param {number} i - index of todo to place next
+ * @return {Event[]} - events chosen for this timechunk
+ */
 function fillTimeChunk(chunkLeft, todos, chosen = [], i = 0) {
   if (i === todos.length || chunkLeft === 0) {
     return [chosen];
@@ -64,6 +84,9 @@ function fillTimeChunk(chunkLeft, todos, chosen = [], i = 0) {
   return fillTimeChunk(chunkLeft, todos, chosen, i+1);
 }
 
+/**
+ * Gets the all possible durations for a todo with inspecific duration
+ */
 function getDurations(todo) {
   const total = (todo.maxDuration - todo.minDuration)/_15Min;
   const durations = [];
