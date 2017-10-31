@@ -1,3 +1,6 @@
+/**
+ * Gets duration and start times of each empty chunk of time between breaks
+ */
 function getTimeChunks(breaks, startTime, endTime) {
   const timeChunks = [];
   if (breaks.length) {
