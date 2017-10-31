@@ -58,7 +58,9 @@ const allDays = calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19));
 
 console.log(JSON.stringify(allDays.slice(0,10)));
 
-assert.equal(allDays[0][0][1].startTime, allDays[0][0][1].getEndTime(), "Start time of subsequent event must equal end time of previous event");
+assert.equal(allDays[0][0][1].startTime, allDays[0][0][0].getEndTime(), "Start time of subsequent event must equal end time of previous event");
+assert.equal(allDays[0][0][0].startTime, hourToMs(8.5), "Start time of event starting the day is the day wide start time.");
+assert.equal(allDays[0][1][0].startTime, hourToMs(13), "Start time of event starting the chunk after a break is the end of the break");
 assert(allDays.slice(0, 50).every(day => day.length === 3), "every day has 3 periods for this calendar");
 assert(
   allDays[0][0].reduce((totalD, todo) => totalD+todo.duration, 0) <= hourToMs(3.5),
