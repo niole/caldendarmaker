@@ -5,6 +5,7 @@
  * @param {number[]} location - lat long for a event location
  * @param {number} startTime - start of event in ms
  * @param {number} duration - duration of event in ms
+ * @param {number} todoId - id of todo from which this was made
  */
 
 
@@ -13,7 +14,8 @@ class Event {
     name,
     location,
     startTime,
-    duration
+    duration,
+    todoId
   ) {
     if (!duration || !startTime) {
       console.error("Make sure the following vars are defined: duration:" + duration+","+ "startTime:"+ startTime);
@@ -23,6 +25,7 @@ class Event {
     this.startTime = startTime;
     this.duration = duration;
     this.location = location;
+    this.todoId = todoId;
     this.id = Math.random();
   }
 

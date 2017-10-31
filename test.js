@@ -56,6 +56,8 @@ const todos = [
 
 const allDays = calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19));
 
+console.log(JSON.stringify(allDays.slice(0,10)));
+
 assert(allDays.slice(0, 50).every(day => day.length === 3), "every day has 3 periods for this calendar");
 assert(
   allDays[0][0].reduce((totalD, todo) => totalD+todo.duration, 0) <= hourToMs(3.5),
@@ -129,26 +131,47 @@ assert.equal(
 assert.deepEqual(
   getTimeChunks(breaks.sort((a, b) => a.startTime - b.startTime), hourToMs(8.5), hourToMs(19)),
   [
-    hourToMs(3.5),
-    hourToMs(4),
-    hourToMs(1)
+    {
+      duration: hourToMs(3.5),
+      start: hourToMs(8.5),
+    },
+    {
+      duration: hourToMs(4),
+      start: hourToMs(13),
+    },
+    {
+      duration: hourToMs(1),
+      start: hourToMs(18),
+    }
   ]
 );
 
 assert.deepEqual(
   getTimeChunks(breaks.sort((a, b) => a.startTime - b.startTime), hourToMs(12), hourToMs(19)),
   [
-    hourToMs(4),
-    hourToMs(1)
+    {
+      duration: hourToMs(4),
+      start: hourToMs(13),
+    },
+    {
+      duration: hourToMs(1),
+      start: hourToMs(18),
+    }
   ]
 );
 
 assert.deepEqual(
   getTimeChunks(breaks.sort((a, b) => a.startTime - b.startTime), hourToMs(12), hourToMs(18)),
-  [hourToMs(4)]
+  [{
+    duration: hourToMs(4),
+    start: hourToMs(13),
+  }]
 );
 
 assert.deepEqual(
   getTimeChunks([], hourToMs(12), hourToMs(18)),
-  [hourToMs(6)]
+  [{
+    duration: hourToMs(6),
+    start: hourToMs(12),
+  }]
 );

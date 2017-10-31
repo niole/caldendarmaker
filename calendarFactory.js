@@ -2,6 +2,7 @@ const {
   getTimeChunks,
 } = require('./util.js');
 const todoFactory = require('./todoFactory.js');
+const { Event } = require('./eventFactory.js');
 
 const _15Min = 15*60*1000;
 
@@ -31,14 +32,14 @@ function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
      return [];
   }
 
-  const timeLeft = timeChunks[nextTimeChunk];
-  const nextStates = fillTimeChunk(timeLeft, todos);
+  const chunk = timeChunks[nextTimeChunk];
+  const nextStates = fillTimeChunk(chunk.duration, chunk.start, todos);
 
   let toReturn = [];
 
   nextStates.forEach(chosenForTimeChunk => {
     const nextState = state.concat([chosenForTimeChunk]);
-    const remainder = todos.filter(({ id }) => !chosenForTimeChunk.find(c => c.todo.id === id));
+    const remainder = todos.filter(({ id }) => !chosenForTimeChunk.find(c => c.todoId === id));
 
     toReturn = toReturn.concat(fitTodos(remainder, timeChunks, nextState, nextTimeChunk + 1));
   });
@@ -50,12 +51,13 @@ function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
  * Gets combinations of events for a timechunk
  *
  * @param {number} chunkLeft - chunk of time left to fill with events
+ * @param {number} startTimeOfChunk - start of chunk of time left to fill with events
  * @param {Todo[]} todos - todos to choose from
  * @param {Event[]} chosen - chose events for this time chunk
  * @param {number} i - index of todo to place next
  * @return {Event[]} - events chosen for this timechunk
  */
-function fillTimeChunk(chunkLeft, todos, chosen = [], i = 0) {
+function fillTimeChunk(chunkLeft, startTimeOfChunk, todos, chosen = [], i = 0) {
   if (i === todos.length || chunkLeft === 0) {
     return [chosen];
   }
@@ -67,21 +69,28 @@ function fillTimeChunk(chunkLeft, todos, chosen = [], i = 0) {
 
   return durations.reduce((states, d) => {
     if (chunkLeft - d > -1) {
+      const event = new Event(
+        todos[i].name,
+        todos[i].location,
+        chosen.length ? chosen[chosen.length - 1].getEndTime() : startTimeOfChunk,
+        d,
+        todos[i].id
+      );
+
       return states.concat(fillTimeChunk(
           chunkLeft - d,
+          startTimeOfChunk,
           todos,
-          chosen.concat([{
-            duration: d,
-            todo: todos[i],
-          }]),
-        i+1).concat(
-        fillTimeChunk(chunkLeft, todos, chosen, i+1)
+          chosen.concat([event]),
+          i+1
+        ).concat(
+        fillTimeChunk(chunkLeft, startTimeOfChunk, todos, chosen, i+1)
       ));
     }
     return states;
   }, []);
 
-  return fillTimeChunk(chunkLeft, todos, chosen, i+1);
+  return fillTimeChunk(chunkLeft, startTimeOfChunk, todos, chosen, i+1);
 }
 
 /**
