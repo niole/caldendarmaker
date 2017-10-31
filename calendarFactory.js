@@ -13,8 +13,11 @@ function calendarFactory(todos, breaks, startTime, endTime) {
 }
 
 function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
-  if (nextTimeChunk === timeChunks.length && todos.length === 0) {
-    return [[state]];
+  if (nextTimeChunk === timeChunks.length) {
+     if (todos.length === 0) {
+        return [state];
+     }
+     return [];
   }
 
   const timeLeft = timeChunks[nextTimeChunk];
@@ -22,9 +25,9 @@ function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
 
   let toReturn = [];
 
-  nextStates.forEach(chosen => {
-    const nextState = state.concat(chosen);
-    const remainder = todos.filter(({ id }) => !chosen.find(c => c.todo.id === id));
+  nextStates.forEach(chosenForTimeChunk => {
+    const nextState = state.concat([chosenForTimeChunk]);
+    const remainder = todos.filter(({ id }) => !chosenForTimeChunk.find(c => c.todo.id === id));
 
     toReturn = toReturn.concat(fitTodos(remainder, timeChunks, nextState, nextTimeChunk + 1));
   });
@@ -33,7 +36,7 @@ function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
 }
 
 function fillTimeChunk(chunkLeft, todos, chosen = [], i = 0) {
-  if (i  === todos.length || chunkLeft === 0) {
+  if (i === todos.length || chunkLeft === 0) {
     return [chosen];
   }
 

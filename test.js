@@ -54,7 +54,33 @@ const todos = [
   ),
 ];
 
-console.log(JSON.stringify(calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19)).slice(0, 5)));
+const allDays = calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19));
+
+assert(allDays.slice(0, 50).every(day => day.length === 3), "every day has 3 periods for this calendar");
+assert(
+  allDays[0][0].reduce((totalD, todo) => totalD+todo.duration, 0) <= hourToMs(3.5),
+  "the aggregate duration in the first period should be less than or equal to 3.5 hours"
+);
+assert(
+  allDays[0][1].reduce((totalD, todo) => totalD+todo.duration, 0) <= hourToMs(4),
+  "the aggregate duration in the first period should be less than or equal to 4 hours"
+);
+assert(
+  allDays[0][2].reduce((totalD, todo) => totalD+todo.duration, 0) <= hourToMs(1),
+  "the aggregate duration in the first period should be less than or equal to 1 hour"
+);
+
+const day1 = JSON.stringify(allDays[0]);
+assert.equal(
+  allDays.find((day, i) => {
+    if (i === 0) {
+      return false;
+    }
+    return day1 === JSON.stringify(day);
+  }),
+  undefined,
+  "events of an id and a duration should be unique"
+);
 
 assert.equal(
   breakFactory(
