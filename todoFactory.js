@@ -1,3 +1,13 @@
+/**
+ * @class
+ * @name Todo
+ * @param {string} name - a name for the todo
+ * @param {number} duration - duration of todo in ms
+ * @param {number} minDuration - min duration of todo in ms
+ * @param {number} maxDuration - max duration of todo in ms
+ * @param {number[]} location - lat long for a todo location
+ */
+
 class Todo {
   constructor(
     name,

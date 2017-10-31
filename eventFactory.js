@@ -1,3 +1,13 @@
+/**
+ * @class
+ * @name Event
+ * @param {string} name - a name for the event
+ * @param {number[]} location - lat long for a event location
+ * @param {number} startTime - start of event in ms
+ * @param {number} duration - duration of event in ms
+ */
+
+
 class Event {
   constructor(
     name,
