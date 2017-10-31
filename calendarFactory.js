@@ -14,7 +14,7 @@ function calendarFactory(todos, breaks, startTime, endTime) {
 
 function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
   if (nextTimeChunk === timeChunks.length && todos.length === 0) {
-    return [state];
+    return [[state]];
   }
 
   const timeLeft = timeChunks[nextTimeChunk];

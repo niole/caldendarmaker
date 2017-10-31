@@ -54,9 +54,7 @@ const todos = [
   ),
 ];
 
-//console.log(calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19)));
 console.log(JSON.stringify(calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19)).slice(0, 5)));
-//console.log(calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19)).slice(0, 5));
 
 assert.equal(
   breakFactory(
