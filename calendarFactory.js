@@ -67,8 +67,49 @@ class Calendar {
 function calendarFactory(todos, breaks, startTime, endTime) {
   const sortedBreaks = breaks.sort((a, b) => a.startTime - b.startTime);
   const timeChunks = getTimeChunks(breaks, startTime, endTime);
-  const allTodoCombinations = fitTodos(todos, timeChunks);
+  const allTodoCombinations = minimizeLocation(fitTodos(todos, timeChunks));
   return new Calendar(allTodoCombinations);
+}
+
+/**
+ * Keeps combinations that have good locality options
+ *
+ * @param {Event[][]} days - events by day
+ * @return {Event[][]} - days of events with similar ones happening in close time proximity
+ */
+function minimizeLocation(days) {
+  const scored = days.map(events => {
+    let score = 0;
+
+    for (let i=0; i < events.length; i++) {
+      let eventBlock = events[i];
+      for (let j=0; j < eventBlock.length; j++) {
+        let event = eventBlock[j];
+        if (event.location) {
+          let locA = event.location;
+          let locB;
+          if (j < eventBlock.length - 1) {
+            locB = eventBlock[j+1].location;
+          } else if (i < events.length - 1 && events[i+1].length) {
+            locB = events[i+1][0].location;
+          }
+
+          if (locB) {
+           score += Math.abs(locA[0] - locB[0]) + Math.abs(locA[1] - locB[1]);
+          }
+        }
+      }
+    }
+
+    return {
+      score,
+      events,
+    };
+  });
+
+  const sortedScores = scored.sort((a, b) => a.score - b.score);
+
+  return sortedScores.map(s => s.events);
 }
 
 /**
@@ -80,7 +121,6 @@ function calendarFactory(todos, breaks, startTime, endTime) {
  * @param {Event[]} state - events, which are the todos and their durations grouped by time chunk
  * @param {number} nextTimeChunk - the index of the next time chunk to create events for
  * @return {Event[][]} - events grouped by day and secondly the time chunk in which they fit
- * TODO create Calendar data type
  */
 function fitTodos(todos, timeChunks, state = [], nextTimeChunk = 0) {
   if (nextTimeChunk === timeChunks.length) {

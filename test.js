@@ -66,7 +66,7 @@ assert.deepEqual(
   calendar.getDayAtIndex(0),
   "The first day should be at the zeroeth index in events"
 );
-assert.equal(calendar.getEvents()[0][0][1].startTime, calendar.getEvents()[0][0][0].getEndTime(), "Start time of subsequent event must equal end time of previous event");
+assert.equal(calendar.getEvents()[0][1][1].startTime, calendar.getEvents()[0][1][0].getEndTime(), "Start time of subsequent event must equal end time of previous event");
 assert.equal(calendar.getEvents()[0][0][0].startTime, hourToMs(8.5), "Start time of event starting the day is the day wide start time.");
 assert.equal(calendar.getEvents()[0][1][0].startTime, hourToMs(13), "Start time of event starting the chunk after a break is the end of the break");
 assert(calendar.getEvents().slice(0, 50).every(day => day.length === 3), "every day has 3 periods for this calendar");
