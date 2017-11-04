@@ -56,6 +56,16 @@ const todos = [
 
 const calendar = calendarFactory(todos, breaks, hourToMs(8.5), hourToMs(19));
 
+assert.deepEqual(
+  calendar.getDay(new Date(calendar.initializedAt.getTime() + hourToMs(24*4))),
+  calendar.getDayAtIndex(3),
+  "The fourth day should be at the third index in events"
+);
+assert.deepEqual(
+  calendar.getDay(new Date(calendar.initializedAt.getTime())),
+  calendar.getDayAtIndex(0),
+  "The first day should be at the zeroeth index in events"
+);
 assert.equal(calendar.getEvents()[0][0][1].startTime, calendar.getEvents()[0][0][0].getEndTime(), "Start time of subsequent event must equal end time of previous event");
 assert.equal(calendar.getEvents()[0][0][0].startTime, hourToMs(8.5), "Start time of event starting the day is the day wide start time.");
 assert.equal(calendar.getEvents()[0][1][0].startTime, hourToMs(13), "Start time of event starting the chunk after a break is the end of the break");

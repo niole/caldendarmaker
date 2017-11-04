@@ -27,14 +27,12 @@ function shuffle(es) {
 }
 
 function getFlooredDate(date) {
-  return (date.getMonth()+1) + " " + date.getDate() + " " + date.getFullYear();
+  return new Date((date.getMonth()+1) + " " + date.getDate() + " " + date.getFullYear());
 }
 
 class Calendar {
   constructor(events) {
     this.events = events;
-    this.dateOfLastUpdate = null;
-    this.scheduled = Array(events.length);
     this.initializedAt = null;
     this.setInitializedDate();
   }
