@@ -5,12 +5,72 @@ const todoFactory = require('./todoFactory.js');
 const { Event } = require('./eventFactory.js');
 
 const _15Min = 15*60*1000;
+const MS_DAY = 24*60*60*1000;
+
+function getPrivateIndex(totalEvents) {
+  return Math.floor(Math.random()*totalEvents);
+}
+
+function shuffle(es) {
+  let nextToPlace = 0;
+  const shuffled = Array(es.length);
+
+  while(nextToPlace < es.length) {
+    let nextIndex = Math.floor(Math.random()*es.length);
+    if (shuffled[nextIndex] !== undefined) {
+      shuffled[nextIndex] = es[nextToPlace];
+      nextToPlace += 1;
+    }
+  }
+
+  return shuffled;
+}
+
+function getFlooredDate(date) {
+  return (date.getMonth()+1) + " " + date.getDate() + " " + date.getFullYear();
+}
+
+class Calendar {
+  constructor(events) {
+    this.events = events;
+    this.dateOfLastUpdate = null;
+    this.scheduled = Array(events.length);
+    this.initializedAt = null;
+    this.setInitializedDate();
+  }
+
+  getEvents() {
+    return this.events;
+  }
+
+  setInitializedDate() {
+    this.initializedAt = getFlooredDate(new Date());
+  }
+
+  getDay(date) {
+    const flooredDate = date ? getFlooredDate(date) : getFlooredDate(new Date());
+    const diffInMs = flooredDate.getTime() - this.initializedAt.getTime();
+    const diffInDays = Math.floor(diffInMs/MS_DAY);
+
+    if (diffInDays >= this.events.length) {
+      // must start over
+      this.setInitializedDate();
+      return this.getDay();
+    }
+    return this.getDayAtIndex(diffInDays);
+  }
+
+  getDayAtIndex(i) {
+    return this.events[i];
+  }
+
+}
 
 function calendarFactory(todos, breaks, startTime, endTime) {
   const sortedBreaks = breaks.sort((a, b) => a.startTime - b.startTime);
   const timeChunks = getTimeChunks(breaks, startTime, endTime);
   const allTodoCombinations = fitTodos(todos, timeChunks);
-  return allTodoCombinations;
+  return new Calendar(allTodoCombinations);
 }
 
 /**
